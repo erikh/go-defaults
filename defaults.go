@@ -194,22 +194,28 @@ func defaultValue(this reflect.Value) error {
 	if this.Kind() == reflect.Struct {
 		for i := 0; i < this.NumField(); i++ {
 			field := this.Type().Field(i)
-			dflt := field.Tag.Get("default")
-			valField := this.Field(i)
+			dflt, ok := field.Tag.Lookup("default")
+			if (ok && dflt != "") || (field.Type.Kind() == reflect.Pointer && field.Type.Elem().Kind() == reflect.Struct) {
+				valField := this.Field(i)
 
-			if valField.Kind() == reflect.Pointer {
-				if valField.IsNil() && field.Type.Elem().Kind() == reflect.Struct {
-					valField.Set(reflect.New(field.Type.Elem()))
-				}
+				if valField.CanSet() {
+					if valField.Kind() == reflect.Pointer {
+						if valField.IsNil() && field.Type.Elem().Kind() == reflect.Struct {
+							valField.Set(reflect.New(field.Type.Elem()))
+						}
 
-				valField = valField.Elem()
-			}
-
-			if valField.CanSet() {
-				if f, ok := CONVERSIONS[valField.Kind()]; ok {
-					if err := f(valField, dflt); err != nil {
-						return fmt.Errorf("invalid conversion of default type for %q: %w", field.Name, err)
+						valField = valField.Elem()
 					}
+
+					if f, ok := CONVERSIONS[valField.Kind()]; ok {
+						if err := f(valField, dflt); err != nil {
+							return fmt.Errorf("invalid conversion of default type for %q: %w", field.Name, err)
+						}
+					} else {
+						return fmt.Errorf("default provided for %q but it's type cannot be set", field.Name)
+					}
+				} else {
+					return fmt.Errorf("default provided for %q but it cannot be set", field.Name)
 				}
 			}
 		}

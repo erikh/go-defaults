@@ -30,7 +30,6 @@ type Types struct {
 	Complex128 complex128 `default:"1+2i"`
 	String     string     `default:"equal"`
 	InnerTypes *InnerTypes
-	s          string `default:"should not panic"`
 }
 
 func TestTypes(t *testing.T) {
