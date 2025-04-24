@@ -1,4 +1,4 @@
-## Use struct tags to determine struct defaults
+## Use struct tags and call functions to determine struct defaults
 
 Similar to rust's `Default` trait; just make sure you call the `defaults.Default()` function against pointer versions of your structs. It will only fill values that are not already at their golang-defined defaults, meaning you can use this after setting struct elements and it will do the right thing.
 
