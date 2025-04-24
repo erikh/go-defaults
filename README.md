@@ -42,6 +42,10 @@ func main() {
 
 Erik Hollensbe <erik@hollensbe.org>
 
+## Stability
+
+This library is considered stable and complete, only situations which panic the library or result in obviously broken behavior will be fixed.
+
 ## License
 
 MIT
