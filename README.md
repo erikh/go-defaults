@@ -48,4 +48,4 @@ This library is considered stable and complete, only situations which panic the 
 
 ## License
 
-MIT
+BSD 3 Clause
