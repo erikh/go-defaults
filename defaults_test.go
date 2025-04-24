@@ -6,6 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type DefaultType struct {
+	b bool
+	s string
+}
+
+func (d *DefaultType) Default() error {
+	d.b = true
+	d.s = "world"
+	return nil
+}
+
 type ErrorType struct {
 	s string `default:"returns an error"`
 }
@@ -82,4 +93,9 @@ func TestTypes(t *testing.T) {
 	assert.NotNil(t, Default(&ErrorType2{}))
 	assert.NotNil(t, Default(&ErrorType3{}))
 	assert.NotNil(t, Default(&ErrorType4{}))
+
+	dt := &DefaultType{}
+	assert.Nil(t, Default(dt))
+	assert.True(t, dt.b)
+	assert.Equal(t, dt.s, "world")
 }

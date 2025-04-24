@@ -1,6 +1,7 @@
 package defaults
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -187,6 +188,19 @@ func init() {
 }
 
 func defaultValue(this reflect.Value) error {
+	if method := this.MethodByName("Default"); method.IsValid() {
+		if !this.Elem().CanSet() {
+			return errors.New("cannot set this struct")
+		}
+
+		ret := method.Call(nil)
+		if !ret[0].IsNil() {
+			return ret[0].Interface().(error)
+		}
+
+		return nil
+	}
+
 	if this.Kind() == reflect.Pointer {
 		this = this.Elem()
 	}

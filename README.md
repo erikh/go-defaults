@@ -4,7 +4,49 @@ Similar to rust's `Default` trait; just make sure you call the `defaults.Default
 
 Note that you can overwrite the `CONVERSIONS` map in the package after initialization to adjust how things are parsed. Reasonable defaults have been supplied, but custom types are not supported. Only those that support `reflect.Type` as a constant.
 
-**This does not handle maps, slices, or arrays**. There is no syntax that would be worth the trouble and make everyone happy and easily fit into a struct tag. Besides, if you need that perhaps you need to write your own code.
+You can also define custom types by writing a `func (t *Type) Default() error` function which modifies your struct directly. It will be called if it exists for all structs in the tree including the top level. This is very similar to the Rust `Default` trait.
+
+Example:
+
+```go
+import (
+    "github.com/erikh/go-defaults"
+)
+
+var DefaultDBConfig = DatabaseConfig{
+    Username: "scott",
+    Password: "tiger",
+    Host: "localhost:1234",
+}
+
+type Config struct {
+    Listen string `default:"localhost:3000"`
+    Listeners uint `default:"5"`
+    DB *DatabaseConfig
+}
+
+type DatabaseConfig {
+    Username string
+    Password string
+    Host string
+}
+
+func (d *DatabaseConfig) Default() error {
+    *d = DefaultDBConfig
+    return nil
+}
+
+func main() {
+    config := &Config{}
+    if err := defaults.Default(config); err != nil {
+        panic(err)
+    }
+
+    if config.DB.Username == "scott" && config.DB.Password == "tiger" {
+        fmt.Println("success")
+    }
+}
+```
 
 For hopefully obvious reasons, **defaults only works on public struct members**.
 
