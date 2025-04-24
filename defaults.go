@@ -244,6 +244,11 @@ func defaultValue(this reflect.Value) error {
 	return nil
 }
 
+// Default takes a type and populates it with defaults. If a `func Default()
+// error` function exists for the type, it will be called, otherwise the struct
+// tag "default" will be used to determine what to offer the type if it is the
+// default value. Defaults do not affect maps, arrays, chans, etc without
+// defining a custom type.
 func Default(this any) error {
 	return defaultValue(reflect.ValueOf(this))
 }

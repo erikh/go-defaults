@@ -2,7 +2,7 @@
 
 Similar to rust's `Default` trait; just make sure you call the `defaults.Default()` function against pointer versions of your structs. It will only fill values that are not already at their golang-defined defaults, meaning you can use this after setting struct elements and it will do the right thing.
 
-Note that you can overwrite the `CONVERSIONS` map in the package after initialization to adjust how things are parsed. Reasonable defaults have been supplied, but custom types are not supported. Only those that support `reflect.Type` as a constant.
+Note that you can overwrite the `CONVERSIONS` map in the package after initialization to adjust how things are parsed. Reasonable defaults have been supplied, custom types are not supported with the struct tag; you must use the `Default` function. Only those that support `reflect.Type` as a constant.
 
 You can also define custom types by writing a `func (t *Type) Default() error` function which modifies your struct directly. It will be called if it exists for all structs in the tree including the top level. This is very similar to the Rust `Default` trait.
 
