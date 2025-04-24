@@ -6,6 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type ErrorType struct {
+	s string `default:"returns an error"`
+}
+
+type ErrorType2 struct {
+	Type InnerTypes `default:"returns an error"`
+}
+
+type ErrorType3 struct {
+	Type *InnerTypes `default:"returns an error"`
+}
+
 type InnerTypes struct {
 	Bool   bool   `default:"true"`
 	String string `default:"hello"`
@@ -61,4 +73,8 @@ func TestTypes(t *testing.T) {
 	for x, item := range table {
 		assert.Equal(t, item[0], item[1], "table item %d was not equal", x)
 	}
+
+	assert.NotNil(t, Default(&ErrorType{}))
+	assert.NotNil(t, Default(&ErrorType2{}))
+	assert.NotNil(t, Default(&ErrorType3{}))
 }

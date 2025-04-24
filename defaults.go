@@ -195,7 +195,13 @@ func defaultValue(this reflect.Value) error {
 		for i := 0; i < this.NumField(); i++ {
 			field := this.Type().Field(i)
 			dflt, ok := field.Tag.Lookup("default")
-			if (ok && dflt != "") || (field.Type.Kind() == reflect.Pointer && field.Type.Elem().Kind() == reflect.Struct) {
+			isStruct := field.Type.Kind() == reflect.Struct || (field.Type.Kind() == reflect.Pointer && field.Type.Elem().Kind() == reflect.Struct)
+
+			if isStruct && ok {
+				return fmt.Errorf("defaults are not allowed on structs such as %q", field.Name)
+			}
+
+			if (ok && dflt != "") || isStruct {
 				valField := this.Field(i)
 
 				if valField.CanSet() {
